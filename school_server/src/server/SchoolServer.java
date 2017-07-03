@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import application.serverController;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ocsf.*;
@@ -32,6 +33,11 @@ public class SchoolServer extends AbstractServer
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
 	private static final File ASSIGNMENTS_DIR = new File("assignments");
 	private static final File SOLUTIONS_DIR = new File("solutions");
+	
+	 String IP = serverController.SQLip;
+	 String User = serverController.SQLuser;
+	 String Password = serverController.SQLpassword;
+	 String Port = serverController.SQLport;
 
 	//final public static int DEFAULT_PORT = 5556;
 	ArrayList<String> arr;
@@ -391,7 +397,7 @@ public class SchoolServer extends AbstractServer
 
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/school", "root", "admin");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			for (int i = 0; i < arguments.length; i++)
 			{
@@ -428,7 +434,7 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/school", "root", "admin");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -499,7 +505,7 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/school", "root", "admin");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -570,7 +576,7 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/school", "root", "admin");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -645,7 +651,7 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/school", "root", "admin");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -712,7 +718,7 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/school", "root", "admin");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -796,7 +802,7 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/school", "root", "admin");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -873,7 +879,7 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/school", "root", "admin");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -926,7 +932,7 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/school", "root", "admin");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://"+ IP + "/school", User, Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
