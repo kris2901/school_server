@@ -194,7 +194,8 @@ public class SchoolServer extends AbstractServer
 		String assignmentName = (String) msg.get(1);
 		String courseid = (String) msg.get(2);
 		String originalFileName = (String) msg.get(3);
-		byte[] contents = (byte[]) msg.get(4);
+		String PupilID = (String) msg.get(4);
+		byte[] contents = (byte[]) msg.get(5);
 
 		int dotIndex = originalFileName.lastIndexOf('.');
 		String extension = originalFileName.substring(dotIndex);
@@ -218,8 +219,8 @@ public class SchoolServer extends AbstractServer
 		System.out.println("Running INSERT");
 
 		executeInsert(
-				"INSERT INTO pupil_assignment (pupilAssignmentName, subbmisionDate, assignmentName) VALUES (?, NOW(), ?)",
-				output.getPath(), assignmentName);
+				"INSERT INTO pupil_assignment (pupilAssignmentName, subbmisionDate, assignmentName, PupilID) VALUES (?, NOW(), ?, ?)",
+				output.getPath(), assignmentName, PupilID);
 
 		System.out.println("OK!");
 	}
