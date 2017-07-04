@@ -33,11 +33,11 @@ public class SchoolServer extends AbstractServer
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm:ss");
 	private static final File ASSIGNMENTS_DIR = new File("assignments");
 	private static final File SOLUTIONS_DIR = new File("solutions");
-	
-	 String IP = serverController.SQLip;
-	 String User = serverController.SQLuser;
-	 String Password = serverController.SQLpassword;
-	 String Port = serverController.SQLport;
+
+	String IP = serverController.SQLip;
+	String User = serverController.SQLuser;
+	String Password = serverController.SQLpassword;
+	String Port = serverController.SQLport;
 
 	//final public static int DEFAULT_PORT = 5556;
 	ArrayList<String> arr;
@@ -62,74 +62,44 @@ public class SchoolServer extends AbstractServer
 	 * @param msg - message
 	 * @param client
 	 */
-
-	private String addAssignment(ArrayList<?> msg)
+	private void addAssignment(ArrayList<?> msg, ConnectionToClient client)
 	{
+		System.out.println("Adding Teacher Assignment");
+		LocalDateTime dueDate = (LocalDateTime) msg.get(1);
+		String courseID = (String) msg.get(2);
+		String originalFileName = (String) msg.get(3);
+		byte[] fileContents = (byte[]) msg.get(4);
 
-		String extention = (String) msg.get(6);
-		String filename = "assignments/" + (String) msg.get(1) + "." + extention;
-		String courseId = (String) msg.get(5);
-		byte bytesarr[] = (byte[]) msg.get(2);
-		int bytesread = (int) msg.get(3);
+		int dotIndex = originalFileName.lastIndexOf('.');
+		String extension = originalFileName.substring(dotIndex);
+		
+		String assignmentFileName = originalFileName;
+
+		File output = new File(ASSIGNMENTS_DIR, assignmentFileName);
+
 		try
 		{
-			FileOutputStream fos = new FileOutputStream(new File(filename), true);
-			fos.write(bytesarr, 0, bytesread);
-			fos.close();
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
+			Files.write(output.toPath(), fileContents);
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
-		}
 
-		LocalDateTime dueDate = (LocalDateTime) msg.get(4);
-		executeInsert("INSERT INTO assignment (assignmentName, dueDate, farmat, courseID) VALUES (?, ?, ?, ?)",
-				(String) msg.get(1), dueDate.format(FORMATTER), extention, courseId);
-
-		executeInsert("INSERT INTO assignment_in_course (courseID, assignmentName) VALUES (?, ?)", courseId,
-				(String) msg.get(1));
-
-		return "success";
-
-	}
-	/*private void addAssignment(ArrayList<?> msg, ConnectionToClient client) {
-		LocalDateTime dueDate = (LocalDateTime) msg.get(1);
-		String courseID = (String) msg.get(2);
-		byte[] fileContents = (byte[]) msg.get(3);
-		String originalFileName = (String) msg.get(4);
-		String assignmentName = (String) msg.get(5);
-	
-		int dotIndex = originalFileName.lastIndexOf('.');
-		String extension = originalFileName.substring(dotIndex);
-	
-		String assignmentFileName = assignmentName + extension;
-	
-		File output = new File(ASSIGNMENTS_DIR, assignmentFileName);
-	
-		try {
-			Files.write(output.toPath(), fileContents);
-		} catch (IOException e) {
-			e.printStackTrace();
-	
 			return;
 		}
-	
+
 		String formattedDate = dueDate.format(FORMATTER);
-	
+
 		System.out.println("FILENAME IS " + assignmentFileName);
-	
+
 		executeInsert("INSERT INTO assignment (assignmentName, dueDate, farmat, courseID) VALUES (?, ?, ?, ?)",
 				assignmentFileName, dueDate.format(FORMATTER), extension.substring(1), courseID);
-	
+
 		executeInsert("INSERT INTO assignment_in_course (courseID, assignmentName) VALUES (?, ?)", courseID,
 				assignmentFileName);
-	
+
 		System.out.println("OK!");
-	}*/
+	}
 
 	/**
 	 * download assignment
@@ -255,19 +225,19 @@ public class SchoolServer extends AbstractServer
 			// TODO remove this try-catch
 			try
 			{
-
-				String answer = addAssignment(rawMessage);
-				client.sendToClient(answer);
+				addAssignment(rawMessage, client);
+				//client.sendToClient(answer);
 			}
 			catch (RuntimeException e)
 			{
 				System.out.println("Something went wrong");
 				e.printStackTrace(System.out);
 			}
-			catch (IOException e)
+			return;
+			/*catch (IOException e)
 			{
 				e.printStackTrace();
-			}
+			}*/
 		}
 
 		if (rawMessage.get(0).equals("add assignment solution"))
@@ -398,7 +368,8 @@ public class SchoolServer extends AbstractServer
 
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User,
+					Password);
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			for (int i = 0; i < arguments.length; i++)
 			{
@@ -435,7 +406,8 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User,
+					Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -506,7 +478,8 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User,
+					Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -577,7 +550,8 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User,
+					Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -652,7 +626,8 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User,
+					Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -719,7 +694,8 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User,
+					Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -803,7 +779,8 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User,
+					Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -880,7 +857,8 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User, Password);
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + ":" + Port + "/school", User,
+					Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
@@ -933,7 +911,7 @@ public class SchoolServer extends AbstractServer
 		}
 		try
 		{
-			Connection conn = DriverManager.getConnection("jdbc:mysql://"+ IP + "/school", User, Password);
+			Connection conn = DriverManager.getConnection("jdbc:mysql://" + IP + "/school", User, Password);
 			stmt = conn.createStatement();
 
 			if (arr.size() == 0)
